@@ -1,0 +1,564 @@
+/* =============================================================================
+   mobile.css — le comportement tactile, commun aux huit sites.
+
+   Ce fichier est PARTAGÉ à dessein. Une direction artistique se joue sur les
+   couleurs, la typographie et la mise en page ; l'ergonomie du pouce, non. Un
+   menu qui déborde et des liens de 24 px de haut sont des défauts partout, et
+   huit corrections séparées auraient dérivé.
+
+   Chaque site garde la main sur l'apparence : ces règles n'emploient que les
+   jetons que les huit définissent déjà (--fond, --texte, --trait, --accent…).
+
+   Ce qu'il corrige, mesuré sur iPhone 13 avant écriture :
+     · des barres de navigation qui défilaient de 108 à 426 px sur le côté ;
+     · de 9 à 34 liens par page sous 32 px de haut, là où le minimum tactile
+       reconnu est 44 px ;
+     · des rails horizontaux (étagère, tableaux) sans repère visible.
+   ========================================================================== */
+
+/* ------------------------------------------------------- le menu déroulant --- */
+/*  Zéro JavaScript : <details> fait l'ouverture/fermeture, et le fait
+    accessible au clavier et aux lecteurs d'écran sans une ligne de script. */
+
+.menu-m {
+  display: none;
+  /* Ancre du panneau. Les huit entêtes ont des mises en page différentes —
+     l'une est `sticky` à 55 px de haut — et un menu qui pousse le conteneur
+     débordait par-dessus le titre. Un panneau ancré au bouton ne touche pas
+     à la hauteur de l'entête, quelle qu'elle soit. */
+  position: relative;
+}
+
+.menu-m__b {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-height: 44px;
+  padding: 0.5rem 0.75rem;
+  margin: 0;
+  border: 1px solid var(--trait, currentColor);
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.menu-m__b::-webkit-details-marker {
+  display: none;
+}
+
+/* Les trois barres, dessinées en CSS : pas d'icône à charger, et elles
+   suivent la couleur du texte de chaque site sans réglage. */
+.menu-m__i {
+  position: relative;
+  width: 18px;
+  height: 2px;
+  background: currentColor;
+  border-radius: 2px;
+  flex: none;
+}
+
+.menu-m__i::before,
+.menu-m__i::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 18px;
+  height: 2px;
+  background: currentColor;
+  border-radius: 2px;
+  transition: transform 0.18s ease, top 0.18s ease;
+}
+
+.menu-m__i::before { top: -6px; }
+.menu-m__i::after  { top: 6px; }
+
+.menu-m[open] .menu-m__i {
+  background: transparent;
+}
+
+.menu-m[open] .menu-m__i::before {
+  top: 0;
+  transform: rotate(45deg);
+}
+
+.menu-m[open] .menu-m__i::after {
+  top: 0;
+  transform: rotate(-45deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu-m__i::before,
+  .menu-m__i::after {
+    transition: none;
+  }
+}
+
+/* Le tiroir : une colonne, une entrée par ligne, jamais de défilement latéral. */
+.menu-m__l {
+  display: grid;
+  gap: 2px;
+  /* Le panneau est ancré au VIEWPORT, pas au bouton.
+     Ancré au bouton, il sortait de l'écran sur `samoens74`, dont le bouton est
+     à gauche : « right: 0 » y poussait un panneau de 16 rem hors cadre. Avec
+     `position: fixed` et `top: auto`, la boîte garde sa position verticale
+     naturelle — juste sous le bouton — et s'étale sur la largeur utile, quelle
+     que soit la mise en page de l'entête. */
+  position: fixed;
+  top: auto;
+  left: 0.75rem;
+  right: 0.75rem;
+  z-index: 60;
+  max-height: min(70dvh, 32rem);
+  /* `overflow-y: auto` seul fait calculer `overflow-x` a `auto` : le panneau
+     se mettait a defiler de côté, exactement ce qu'on venait de supprimer. */
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  margin: 0;
+  padding: 0.4rem;
+  list-style: none;
+  background: var(--fond, #fff);
+  border: 1px solid var(--trait, rgba(0, 0, 0, 0.16));
+  border-radius: 12px;
+  box-shadow: 0 18px 40px -18px rgba(0, 0, 0, 0.4);
+}
+
+.menu-m__l a {
+  display: flex;
+  align-items: center;
+  /* 48 px : au-dessus du minimum de 44, parce qu'un menu se vise en marchant. */
+  min-height: 48px;
+  padding: 0.65rem 0.85rem;
+  border-radius: 8px;
+  color: inherit;
+  text-decoration: none;
+  font-size: 1rem;
+  line-height: 1.25;
+}
+
+.menu-m__l a[aria-current="page"] {
+  font-weight: 700;
+  background: var(--fond-2, rgba(0, 0, 0, 0.05));
+}
+
+.menu-m__l a:active,
+.menu-m__l a:focus-visible {
+  background: var(--fond-2, rgba(0, 0, 0, 0.06));
+}
+
+.menu-m__l li + li {
+  border-top: 1px solid var(--trait, rgba(0, 0, 0, 0.08));
+}
+
+/* ------------------------------------------------- la bascule au téléphone --- */
+
+@media (max-width: 52rem) {
+  .menu-m {
+    display: block;
+  }
+
+  /* La barre horizontale disparaît : c'est elle qui débordait. */
+  .nav,
+  .bandeau__nav,
+  .entete__nav,
+  nav.nav {
+    display: none !important;
+  }
+
+  /* Toute liste de liens qui défilait latéralement se replie. */
+  [data-rail],
+  .planche__rail {
+    overflow-x: visible;
+  }
+
+  /* Les cibles tactiles : on relève le plancher partout où on clique. */
+  .fil__a,
+  .rang a,
+  .rangs a,
+  .entrees a,
+  .repertoire a,
+  .sujets__i a,
+  .lien-fil,
+  .pied a,
+  .etiquettes a {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  /* Les rubans et barres de rubriques : le menu les remplace. C'est le ruban
+     de `location` qui poussait sa page à 345 px de trop. */
+  .rubans,
+  .planche__rail > .rangee {
+    overflow: visible;
+  }
+
+  .rubans {
+    display: none !important;
+  }
+
+  /* L'étagère de `vin` défile de 950 px : sur un pouce, c'est une devinette.
+     Elle redevient une grille de deux colonnes, qui se lit d'un coup d'œil. */
+  .planche__rail {
+    overflow-x: visible;
+    padding-bottom: 0.8rem;
+  }
+
+  /* Spécificité montée d'un cran : `mobile.css` est importé EN TÊTE, donc les
+     règles du site passent après et gagnent à spécificité égale. Un sélecteur
+     descendant suffit à reprendre la main sans `!important`. */
+  .planche__rail .rangee {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem 0.8rem;
+    min-width: 0;
+  }
+
+  .planche__rail .rangee .bouteille {
+    width: auto;
+  }
+
+  /* --- les cibles tactiles --------------------------------------------- */
+  /*  Mesurées avant écriture : de 6 à 19 liens par page sous 32 px de haut.
+      Trois familles reviennent partout, d'où trois règles.
+
+      1. La marque, en haut à gauche : large mais plate.
+      2. Les TITRES QUI SONT DES LIENS — leur hauteur est celle d'une ligne de
+         texte, donc elle rétrécit avec la police.
+      3. Les boutons de filtre et de tri.
+
+      Les classes ci-dessous appartiennent à des sites précis du réseau. Elles
+      sont ici, et pas dans chaque feuille, parce que le défaut est le même
+      partout et qu'une correction en huit exemplaires aurait dérivé. */
+
+  .marque {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  h1 a, h2 a, h3 a, h4 a,
+  .fiche__nom a, .groupe__t a, .rub__t a, .surtitre a,
+  .une__titre a, .une__cote-titre a, .breve a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+
+  .tri__b, .tri, .filtre, button[aria-pressed] {
+    min-height: 44px;
+    padding-block: 0.55rem;
+  }
+
+  .lien-suite, .lien-fil, .entete__index {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  /* Un lien seul dans une puce de liste ou une cellule de tableau : c'est la
+     forme la plus courante d'un index, et sa hauteur est celle d'une ligne.
+     On vise la puce plutôt que le lien pour ne pas casser un lien enchâssé
+     au milieu d'une phrase. */
+  li > a:only-child,
+  td > a:only-child,
+  th > a:only-child {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+  }
+
+  /* Le cas « lien + compteur » : `<li><a>Travaux</a><span>2 articles</span></li>`.
+     Le lien n'est plus `:only-child`, donc la règle ci-dessus le manque.
+     CSS ne sait pas dire « cette liste est une navigation », mais une mesure
+     tient lieu de règle sur ce réseau : les listes de PROSE sortent du moteur
+     Markdown sans classe, les listes d'index en portent toujours une. Cibler
+     `ul[class]` ne touche donc jamais un lien au milieu d'une phrase. */
+  ul[class] > li > a:first-child,
+  ol[class] > li > a:first-child {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+  }
+
+  /* Un tableau reste un tableau : il défile, mais on le DIT. */
+  .tableau-enrobe {
+    position: relative;
+  }
+
+  .tableau-enrobe::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 2rem;
+    height: 100%;
+    pointer-events: none;
+    background: linear-gradient(to right, transparent, var(--fond, #fff));
+  }
+}
+
+/* ------------------------------------------------ le très petit téléphone --- */
+
+@media (max-width: 24rem) {
+  .menu-m__l a {
+    font-size: 0.96rem;
+  }
+}
+
+/* ------------------------------------------------------ les tableaux au doigt --- */
+/*  Mesuré : un tableau de cinq colonnes fait 624 px pour 320 disponibles sur un
+    iPhone 13. On ne le fait pas rentrer, on le change de forme : chaque ligne
+    devient une fiche, chaque cellule porte le libellé de sa colonne à gauche.
+    Le libellé vient de `data-libelle`, posé au chargement par scriptCommun().
+    Sans JavaScript, l'attribut manque et le tableau reste un tableau qui
+    défile — dégradé, jamais cassé. */
+
+@media (max-width: 44rem) {
+  table[data-empilable] {
+    display: block;
+    width: 100%;
+    border-collapse: collapse;
+    /* Les feuilles de site posent un `min-width` sur leurs tableaux (420 px sur
+       ski) pour garder les colonnes lisibles en large. Empilé, ce plancher n'a
+       plus de sens et poussait la page de 189 px. */
+    min-width: 0;
+  }
+
+  table[data-empilable] colgroup,
+  table[data-empilable] col {
+    display: none;
+  }
+
+  table[data-empilable] thead {
+    /* Masqué à l'œil, gardé pour les lecteurs d'écran. */
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  table[data-empilable] tbody,
+  table[data-empilable] tr,
+  table[data-empilable] td,
+  table[data-empilable] th {
+    display: block;
+    width: auto;
+  }
+
+  table[data-empilable] tbody tr {
+    padding: 0.7rem 0;
+    border-bottom: 1px solid var(--trait, rgba(0, 0, 0, 0.12));
+  }
+
+  table[data-empilable] tbody tr > *:first-child {
+    font-weight: 700;
+    font-size: 1.02rem;
+    padding-bottom: 0.35rem;
+  }
+
+  table[data-empilable] tbody td[data-libelle] {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.75rem;
+    align-items: baseline;
+    padding: 0.28rem 0;
+    text-align: left;
+  }
+
+  table[data-empilable] tbody td[data-libelle]::before {
+    content: attr(data-libelle);
+    font-size: 0.82rem;
+    line-height: 1.35;
+    color: var(--texte-3, #666);
+  }
+
+  table[data-empilable] tfoot {
+    display: block;
+    border-top: 2px solid var(--trait, rgba(0, 0, 0, 0.2));
+  }
+
+  table[data-empilable] tfoot tr,
+  table[data-empilable] tfoot td,
+  table[data-empilable] tfoot th {
+    display: block;
+  }
+
+  /* Le conteneur n'a plus rien à faire défiler : son dégradé partirait. */
+  .tableau-enrobe {
+    overflow-x: visible;
+  }
+
+  .tableau-enrobe::after {
+    display: none;
+  }
+}
+
+/* ================================================================ bannières ===
+
+   L'ouverture de site. La photo occupe toute la largeur, le titre est posé sur
+   un VOILE opaque et non sur l'image : un texte à même une photo n'a pas de
+   contraste mesurable, et donc pas de contraste garanti.
+
+   Structure commune, apparence au site : les couleurs viennent des jetons que
+   chacun définit déjà.
+   ========================================================================== */
+
+.banniere {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  align-items: end;
+  justify-items: start;
+  min-height: clamp(15rem, 42vw, 26rem);
+  margin: 0;
+  overflow: hidden;
+  background: var(--fond-3, #e9e6e0);
+}
+
+.banniere--haute {
+  min-height: clamp(19rem, 56vw, 34rem);
+}
+
+.banniere--basse {
+  min-height: clamp(11rem, 26vw, 17rem);
+}
+
+.banniere__fond {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.banniere__fond img,
+.banniere__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.banniere__motif {
+  display: block;
+  width: 100%;
+  height: 100%;
+  opacity: 0.5;
+}
+
+/* Le voile : opaque là où le texte se pose, transparent au loin. C'est lui qui
+   rend le contraste mesurable. */
+/* Le voile ne porte plus le contraste — le panneau s'en charge. Il ne fait
+   qu'asseoir le panneau sur l'image, très légèrement. */
+.banniere__voile {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.22) 0%, rgba(0, 0, 0, 0) 45%);
+}
+
+.banniere__in {
+  position: relative;
+  z-index: 2;
+  width: min(100%, 34rem);
+  margin: 0;
+  padding: clamp(1.1rem, 3.2vw, 2rem) clamp(1rem, 3.4vw, 2rem);
+  color: var(--banniere-texte, #16130f);
+  /* Un PANNEAU OPAQUE, pas un dégradé.
+     Le voile mesurait 1,33:1 au contrôle : un dégradé n'est pas une couleur de
+     fond, donc rien ne garantit la lisibilité — cela dépend de la photo. Un
+     panneau plein se mesure, et il tient quelle que soit l'image dessous. */
+  background: var(--banniere-panneau, #fff);
+  border-radius: 0 12px 0 0;
+}
+
+.banniere__s {
+  margin: 0 0 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--banniere-surtitre, rgba(255, 255, 255, 0.82));
+}
+
+.banniere__t {
+  margin: 0;
+  font-size: clamp(1.75rem, 6.2vw, 3.6rem);
+  line-height: 1.06;
+  letter-spacing: -0.015em;
+  color: inherit;
+}
+
+.banniere__d {
+  margin: 0.7rem 0 0;
+  max-width: 46ch;
+  font-size: clamp(0.98rem, 2.6vw, 1.12rem);
+  line-height: 1.55;
+  /* Le panneau est passé du sombre au clair : ce texte était resté blanc, donc
+     blanc sur blanc, mesuré à 1,23:1. */
+  color: var(--banniere-sous, #4a443c);
+}
+
+.banniere__c {
+  position: absolute;
+  right: 0.6rem;
+  top: 0.5rem;
+  z-index: 2;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  font-size: 0.68rem;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.72);
+}
+
+@media (max-width: 34rem) {
+  .banniere__c {
+    position: static;
+    display: block;
+    padding: 0.35rem 1rem 0.5rem;
+    color: var(--texte-3, #6b6b6b);
+    background: var(--fond, #fff);
+  }
+}
+
+/* ============================================================ typographie ===
+
+   Trois défauts relevés par `scripts/gout.mjs` sur les huit sites, tous
+   mesurés sur la page rendue et non supposés.
+   ========================================================================== */
+
+/* 1. Les veuves. Un dernier mot seul sur sa ligne dans un grand titre : le
+      navigateur sait l'éviter, il faut juste le lui demander. `balance` répartit
+      les lignes d'un titre court, `pretty` évite l'orpheline dans un paragraphe. */
+h1, h2, h3,
+.banniere__t,
+.essai__t,
+.etagere-tete__t {
+  text-wrap: balance;
+}
+
+p, li, figcaption, .mene, .chapo {
+  text-wrap: pretty;
+}
+
+/* 2. Les chiffres. Dans un tableau ou une jauge, des glyphes de largeurs
+      différentes font danser les colonnes d'une ligne à l'autre. */
+table,
+.chiffres,
+.chiffre__v,
+.repere__v,
+.jauge__n,
+[class*="tabulaire"],
+time {
+  font-variant-numeric: tabular-nums lining-nums;
+}

@@ -1,0 +1,4 @@
+# Apercu prive. Rien ici ne doit etre indexe : le site definitif vivra
+# sur https://vin-samoens.fr/ et ne doit pas se faire concurrence a lui-meme.
+User-agent: *
+Disallow: /

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <rect width="1200" height="630" fill="#14100e"/>
+  <circle cx="1010" cy="315" r="90" fill="none" stroke="#2b2420" stroke-width="1.6"/><circle cx="1010" cy="315" r="156" fill="none" stroke="#2b2420" stroke-width="1.6"/><circle cx="1010" cy="315" r="222" fill="none" stroke="#2b2420" stroke-width="1.6"/><circle cx="1010" cy="315" r="288" fill="none" stroke="#2b2420" stroke-width="1.6"/><circle cx="1010" cy="315" r="354" fill="none" stroke="#2b2420" stroke-width="1.6"/><circle cx="1010" cy="315" r="420" fill="none" stroke="#2b2420" stroke-width="1.6"/><circle cx="1010" cy="315" r="486" fill="none" stroke="#2b2420" stroke-width="1.6"/><circle cx="1010" cy="315" r="552" fill="none" stroke="#2b2420" stroke-width="1.6"/><circle cx="1010" cy="315" r="618" fill="none" stroke="#2b2420" stroke-width="1.6"/>
+  <rect x="88" y="196" width="640" height="1.4" fill="#332b25"/>
+  <rect x="88" y="430" width="640" height="1.4" fill="#332b25"/>
+  <text x="88" y="170" fill="#c6a15b" font-family="Helvetica, Arial, sans-serif" font-size="21"
+    letter-spacing="5.4">VINS DE SAVOIE &#183; VALL&#201;E DU GIFFRE</text>
+  <text x="88" y="330" fill="#efe8de" font-family="Georgia, 'Times New Roman', serif" font-size="96">Vin Samoëns</text>
+  <text x="88" y="392" fill="#b0a395" font-family="Georgia, 'Times New Roman', serif" font-size="34"
+    font-style="italic">C&#233;pages, crus, accords de montagne</text>
+  <rect x="88" y="482" width="96" height="2" fill="#c6a15b"/>
+</svg>
